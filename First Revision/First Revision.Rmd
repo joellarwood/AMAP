@@ -203,7 +203,8 @@ arousalinteract <- glmer(arousal ~ 1 + alexithymia + condition + alexithymia*con
 a.test <- as(arousalinteract,"merModLmerTest")
 anova(a.test)
 
-interactions::sim_slopes(model = arousalinteract, pred = alexithymia , modx = condition, confint = TRUE)
+interactions::sim_slopes(model = arousalinteract, pred = alexithymia , modx = condition, confint = TRUE, digits = getOption("jtools-digits",
+  default = 3))
 ```
 ## Plot model
 ```{r plot arousal}
@@ -247,13 +248,23 @@ v.test <- as(valenceinteract,"merModLmerTest")
 anova(v.test) 
 
 
-interactions::sim_slopes(model = valenceinteract, pred = alexithymia , modx = condition, confint = TRUE)
+interactions::sim_slopes(model = valenceinteract, pred = alexithymia , modx = condition, confint = TRUE, digits = getOption("jtools-digits",
+  default = 3), johnson_neyman = FALSE)
 ```
 ##Plot Model
-```{r valence plot}
-valenceplot <- interactions::interact_plot(model = valenceinteract, pred = alexithymia, modx = condition, interval = TRUE) + 
-  theme_apa() + 
-  geom_hline(yintercept = 0, linetype = "dotted") + labs (x = "Alexithymia", y = "Rated valence") 
+```{r valence plot, message = FALSE}
+valenceplot <- interactions::interact_plot(model = valenceinteract, 
+                                           pred = alexithymia, 
+                                           modx = condition,
+                                           modx.values = c("Tender",
+                                                           "Sad", 
+                                                           "Happy",
+                                                           "Fearful",
+                                                           "Angry"),
+                                           interval = TRUE, 
+                                           legend.main = c("Target Emotion"))                    +
+  theme_classic() + 
+  geom_hline(yintercept = 0, linetype = "dotted") + labs (x = "Alexithymia", y = "Rated valence")  
 valenceplot
 ```
 
@@ -280,21 +291,34 @@ arousaldoc <- ph_with_vg(arousaldoc, ggobj = arousalplot,
                   type = "body")
 print(arousaldoc, target = "arousalplot.pptx")
 ```
+## Build plot myself 
+
+```{r}
+
+diyarousal <- ggplot(rr.long.arousal(x = ))
+
+
+
+
+```
+
+
 
 ## Save plot
 ```{r}
-ggsave(filename = "valence.tiff", 
+ggplot2::ggsave(filename = "valence.jpg", 
        plot = valenceplot, 
        width = 9,
        height = 7,
        dpi = 320)
 
-ggsave(filename = "arousal.tiff", 
+ggplot2::ggsave(filename = "arousal.jpg", 
        plot = arousalplot, 
        width = 9,
        height = 7,
        dpi = 320)
 ```
+
 
 
 
